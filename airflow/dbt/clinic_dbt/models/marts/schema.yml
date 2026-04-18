@@ -18,23 +18,38 @@ models:
         description: "Foreign key to dim_customers"
         tests:
           - not_null
+          - relationships:   
+              to: ref('dim_customers')
+              field: customer_id
 
       - name: order_date
         description: "Date the order was created"
+        tests:
+          - not_null
 
       - name: order_status
         description: "Lifecycle status of the order (completed, cancelled, etc.)"
+        tests:
+          - not_null 
+          - accepted_values: 
+              values: ['completed', 'cancelled']
 
       - name: total_paid
         description: "Total amount paid for the order"
         tests:
           - not_null
+          - dbt_utils.expression_is_true: 
+              expression: ">= 0"    
 
       - name: is_paid
         description: "True if the order has any payment"
+        tests:
+          - not_null
 
       - name: is_fulfilled
         description: "True if order is completed and paid"
+        tests:
+          - not_null
 
   - name: dim_customers
     description: >
@@ -48,8 +63,12 @@ models:
           - not_null
           - unique
 
-      - name: customer_name
+      - name: name
         description: "Customer full name"
-
+        tests:
+          - not_null
+    
       - name: email
         description: "Customer email address"
+        tests:
+          - not_null

@@ -20,6 +20,14 @@ models:
 
       - name: service_type
         description: Type of acupuncture service ordered
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Acupuncture', 'Cupping', 'Massage']
 
       - name: status
         description: Current status of the order
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['completed', 'cancelled']
