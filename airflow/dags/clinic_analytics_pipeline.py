@@ -6,8 +6,11 @@ from datetime import datetime, timedelta
 default_args = {
     "owner": "data_engineering",
     "depends_on_past": False,
-    "retries": 1,
+    "retries": 2,
     "retry_delay": timedelta(minutes=5),
+    "email": ["rmli020107@gmail.com"],     
+    "email_on_failure": True,                       # alert on real failure
+    "email_on_retry": False,                        # don't alert on retry attempts
 }
 
 # Define the DAG
