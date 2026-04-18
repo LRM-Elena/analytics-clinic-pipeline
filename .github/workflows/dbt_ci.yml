@@ -1,0 +1,54 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dbt
+        run: pip install dbt-bigquery==1.11.0
+
+      - name: Write GCP credentials
+        run: |
+          echo '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}' > /tmp/service-account.json
+
+      - name: Write dbt profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          clinic_dbt:
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: de-pipeline-clinic
+                dataset: DE_clinic
+                keyfile: /tmp/service-account.json
+                threads: 4
+                job_execution_timeout_seconds: 300
+                job_retries: 1
+                priority: interactive
+            target: dev
+          EOF
+
+      - name: dbt compile
+        working-directory: airflow/dbt/clinic_dbt
+        run: dbt compile
+
+      - name: dbt test
+        working-directory: airflow/dbt/clinic_dbt
+        run: dbt test
