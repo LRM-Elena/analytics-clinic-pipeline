@@ -1,0 +1,59 @@
+version: 2
+
+models:
+  - name: int_orders_corrected
+    description: >
+      Intermediate model that applies order corrections to raw orders.
+      This model standardizes service_type and status by applying
+      overrides from order_corrections before analytics models consume the data.
+  
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_id
+        description: Identifier of the customer who placed the order.
+        tests:
+          - not_null
+
+      - name: order_date
+        description: Date the order was created.
+      
+      - name: service_type
+        description: Service type after applying corrections (coalesce logic)
+      
+      - name: status
+        description: Order status after applying corrections (coalesce logic)
+
+
+  - name: int_payments
+    description: >
+      Order-level aggregated payment metrics derived from payment events.
+      One row per order, representing total successful payments recorded
+      in the source system.
+
+    columns:
+      - name: order_id
+        description: Unique identifier of the order.
+        tests:
+          - not_null
+          - unique
+
+      - name: total_paid
+        description: Total amount paid for the order, aggregated across all payments.
+        tests:
+          - not_null
+
+      - name: payment_count
+        description: Number of payment transactions associated with the order.
+        tests:
+          - not_null
+
+      - name: first_payment_date
+        description: Timestamp of the first recorded payment for the order.
+
+      - name: last_payment_date
+        description: Timestamp of the most recent recorded payment for the order.

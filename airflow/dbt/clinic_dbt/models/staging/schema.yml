@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: Cleaned and standardized orders data from raw source
+    columns:
+      - name: order_id
+        description: Unique identifier for each order
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Identifier of the customer who placed the order
+        tests:
+          - not_null
+
+      - name: order_date
+        description: Date when the order was placed
+
+      - name: service_type
+        description: Type of acupuncture service ordered
+
+      - name: status
+        description: Current status of the order

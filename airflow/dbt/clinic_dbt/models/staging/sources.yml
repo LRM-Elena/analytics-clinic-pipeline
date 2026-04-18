@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: raw
+    database: de-pipeline-clinic   # GCP project ID
+    schema: clinic_raw             # BigQuery dataset name
+    tables:
+      - name: order_corrections
+      - name: raw_customers
+      - name: raw_orders
+      - name: raw_payments

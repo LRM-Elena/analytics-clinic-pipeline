@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: >
+      Fact table at order grain (one row per order).
+      Combines orders, payments, and denormalized customer attributes
+      for analytical querying.
+
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order"
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: "Foreign key to dim_customers"
+        tests:
+          - not_null
+
+      - name: order_date
+        description: "Date the order was created"
+
+      - name: order_status
+        description: "Lifecycle status of the order (completed, cancelled, etc.)"
+
+      - name: total_paid
+        description: "Total amount paid for the order"
+        tests:
+          - not_null
+
+      - name: is_paid
+        description: "True if the order has any payment"
+
+      - name: is_fulfilled
+        description: "True if order is completed and paid"
+
+  - name: dim_customers
+    description: >
+      Customer dimension table containing one row per customer.
+      Used to enrich fact tables with customer attributes.
+
+    columns:
+      - name: customer_id
+        description: "Primary key for customers"
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_name
+        description: "Customer full name"
+
+      - name: email
+        description: "Customer email address"
